@@ -9,7 +9,7 @@ import { Shirt, LayoutDashboard, LogOut, Plus, CheckCircle2, Clock, X } from 'lu
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
-const WorkerDashboard = ({ user, onLogout }) => {
+function WorkerDashboard({ user, onLogout }) {
   const [entries, setEntries] = useState([]);
   const [showAddForm, setShowAddForm] = useState(false);
   const [filter, setFilter] = useState('all');
@@ -23,7 +23,7 @@ const WorkerDashboard = ({ user, onLogout }) => {
     fetchEntries();
   }, []);
 
-  const fetchEntries = async () => {
+  async function fetchEntries() {
     try {
       const token = localStorage.getItem('token');
       const response = await axios.get(`${API}/laundry/all`, {
@@ -33,27 +33,35 @@ const WorkerDashboard = ({ user, onLogout }) => {
     } catch (error) {
       toast.error('Failed to fetch entries');
     }
-  };
+  }
 
-  const handleAddItem = () => {
-    setFormData({
-      ...formData,
-      items: [...formData.items, { item_type: '', quantity: 1 }]
-    });
-  };
-
-  const handleRemoveItem = (index) => {
-    const newItems = formData.items.filter((_, i) => i !== index);
-    setFormData({ ...formData, items: newItems });
-  };
-
-  const handleItemChange = (index, field, value) => {
+  function handleAddItem() {
     const newItems = [...formData.items];
-    newItems[index][field] = field === 'quantity' ? parseInt(value) : value;
+    newItems.push({ item_type: '', quantity: 1 });
     setFormData({ ...formData, items: newItems });
-  };
+  }
 
-  const handleSubmit = async (e) => {
+  function handleRemoveItem(index) {
+    const newItems = [];
+    for (let i = 0; i < formData.items.length; i++) {
+      if (i !== index) {
+        newItems.push(formData.items[i]);
+      }
+    }
+    setFormData({ ...formData, items: newItems });
+  }
+
+  function handleItemChange(index, field, value) {
+    const newItems = [...formData.items];
+    if (field === 'quantity') {
+      newItems[index][field] = parseInt(value);
+    } else {
+      newItems[index][field] = value;
+    }
+    setFormData({ ...formData, items: newItems });
+  }
+
+  async function handleSubmit(e) {
     e.preventDefault();
     try {
       const token = localStorage.getItem('token');
@@ -71,9 +79,9 @@ const WorkerDashboard = ({ user, onLogout }) => {
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Failed to create entry');
     }
-  };
+  }
 
-  const handleComplete = async (entryId) => {
+  async function handleComplete(entryId) {
     try {
       const token = localStorage.getItem('token');
       await axios.put(`${API}/laundry/complete`, { entry_id: entryId }, {
@@ -84,11 +92,13 @@ const WorkerDashboard = ({ user, onLogout }) => {
     } catch (error) {
       toast.error('Failed to mark as completed');
     }
-  };
+  }
 
-  let filteredEntries = entries;
-  if (filter !== 'all') {
-    filteredEntries = entries.filter(entry => entry.status === filter);
+  const filteredEntries = [];
+  for (let entry of entries) {
+    if (filter === 'all' || entry.status === filter) {
+      filteredEntries.push(entry);
+    }
   }
 
   const stats = {
@@ -349,47 +359,47 @@ const WorkerDashboard = ({ user, onLogout }) => {
                     </td>
                   </tr>
                 ) : (
-                  filteredEntries.map((entry) => (
-                    <tr key={entry.entry_id} data-testid={`entry-row-${entry.entry_id}`}>
-                      <td className="font-medium">{entry.student_id}</td>
-                      <td>{entry.student_name}</td>
-                      <td>
-                        {entry.items.map((item, idx) => (
-                          <div key={idx} className="text-xs">
-                            {item.item_type} x{item.quantity}
-                          </div>
-                        ))}
-                      </td>
-                      <td>{entry.total_items}</td>
-                      <td>{new Date(entry.submission_date).toLocaleDateString()}</td>
-                      <td>
-                        <span
-                          className={`status-badge ${
-                            entry.status === 'received'
-                              ? 'bg-amber-100 text-amber-800 border-amber-200'
-                              : entry.status === 'completed'
-                              ? 'bg-emerald-100 text-emerald-800 border-emerald-200'
-                              : 'bg-slate-100 text-slate-600 border-slate-200'
-                          }`}
-                        >
-                          {entry.status.replace('_', ' ')}
-                        </span>
-                      </td>
-                      <td>
-                        {entry.status === 'received' && (
-                          <Button
-                            data-testid={`complete-btn-${entry.entry_id}`}
-                            onClick={() => handleComplete(entry.entry_id)}
-                            size="sm"
-                            className="bg-accent hover:bg-accent/90"
-                          >
-                            <CheckCircle2 size={14} className="mr-1" />
-                            Complete
-                          </Button>
-                        )}
-                      </td>
-                    </tr>
-                  ))
+                  filteredEntries.map((entry) => {
+                    const statusClass = entry.status === 'received'
+                      ? 'bg-amber-100 text-amber-800 border-amber-200'
+                      : entry.status === 'completed'
+                      ? 'bg-emerald-100 text-emerald-800 border-emerald-200'
+                      : 'bg-slate-100 text-slate-600 border-slate-200';
+
+                    return (
+                      <tr key={entry.entry_id} data-testid={`entry-row-${entry.entry_id}`}>
+                        <td className="font-medium">{entry.student_id}</td>
+                        <td>{entry.student_name}</td>
+                        <td>
+                          {entry.items.map((item, idx) => (
+                            <div key={idx} className="text-xs">
+                              {item.item_type} x{item.quantity}
+                            </div>
+                          ))}
+                        </td>
+                        <td>{entry.total_items}</td>
+                        <td>{new Date(entry.submission_date).toLocaleDateString()}</td>
+                        <td>
+                          <span className={`status-badge ${statusClass}`}>
+                            {entry.status.replace('_', ' ')}
+                          </span>
+                        </td>
+                        <td>
+                          {entry.status === 'received' && (
+                            <Button
+                              data-testid={`complete-btn-${entry.entry_id}`}
+                              onClick={() => handleComplete(entry.entry_id)}
+                              size="sm"
+                              className="bg-accent hover:bg-accent/90"
+                            >
+                              <CheckCircle2 size={14} className="mr-1" />
+                              Complete
+                            </Button>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })
                 )}
               </tbody>
             </table>
@@ -398,6 +408,6 @@ const WorkerDashboard = ({ user, onLogout }) => {
       </div>
     </div>
   );
-};
+}
 
 export default WorkerDashboard;
