@@ -39,8 +39,16 @@ const StudentDashboard = ({ user, onLogout }) => {
     }
   };
 
-  const activeEntry = entries.find(e => e.status === 'completed');
-  const historyEntries = entries.filter(e => e.status !== 'completed');
+  let activeEntry = null;
+  const historyEntries = [];
+  
+  for (let i = 0; i < entries.length; i++) {
+    if (entries[i].status === 'completed' && !activeEntry) {
+      activeEntry = entries[i];
+    } else if (entries[i].status !== 'completed') {
+      historyEntries.push(entries[i]);
+    }
+  }
 
   return (
     <div className="min-h-screen bg-background">
