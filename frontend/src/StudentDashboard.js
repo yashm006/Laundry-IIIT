@@ -16,7 +16,7 @@ const StudentDashboard = ({ user, onLogout }) => {
 
   const fetchEntries = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('student_token');
       const response = await axios.get(`${API}/laundry/student/${user.student_id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
