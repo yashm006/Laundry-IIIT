@@ -155,66 +155,70 @@ const StudentDashboard = ({ user, onLogout }) => {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {historyEntries.map((entry) => (
-                <div
-                  key={entry.entry_id}
-                  data-testid={`history-card-${entry.entry_id}`}
-                  className="bg-card p-6 rounded-xl border shadow-sm laundry-card"
-                >
-                  <div className="flex justify-between items-start mb-4">
-                    <div className="flex items-center gap-2">
-                      <Shirt size={20} className="text-primary" />
-                      <span className="font-semibold">{entry.total_items} Items</span>
-                    </div>
-                    <span
-                      className={`status-badge ${
-                        entry.status === 'received'
-                          ? 'bg-amber-100 text-amber-800 border-amber-200'
-                          : 'bg-slate-100 text-slate-600 border-slate-200'
-                      }`}
-                    >
-                      {entry.status === 'received' ? 'In Progress' : 'Picked Up'}
-                    </span>
-                  </div>
+              {historyEntries.map(function(entry) {
+                const statusClass = entry.status === 'received'
+                  ? 'bg-amber-100 text-amber-800 border-amber-200'
+                  : 'bg-slate-100 text-slate-600 border-slate-200';
+                const statusText = entry.status === 'received' ? 'In Progress' : 'Picked Up';
+                const showCompleted = entry.status === 'picked_up';
 
-                  <div className="space-y-3">
-                    <div>
-                      <p className="text-xs text-muted-foreground mb-1">Items</p>
-                      <div className="flex flex-wrap gap-1">
-                        {entry.items.map((item, idx) => (
-                          <span
-                            key={idx}
-                            className="text-xs bg-secondary px-2 py-1 rounded"
-                          >
-                            {item.item_type} x{item.quantity}
-                          </span>
-                        ))}
+                return (
+                  <div
+                    key={entry.entry_id}
+                    data-testid={`history-card-${entry.entry_id}`}
+                    className="bg-card p-6 rounded-xl border shadow-sm laundry-card"
+                  >
+                    <div className="flex justify-between items-start mb-4">
+                      <div className="flex items-center gap-2">
+                        <Shirt size={20} className="text-primary" />
+                        <span className="font-semibold">{entry.total_items} Items</span>
                       </div>
+                      <span className={`status-badge ${statusClass}`}>
+                        {statusText}
+                      </span>
                     </div>
 
-                    <div>
-                      <p className="text-xs text-muted-foreground mb-1">Submitted</p>
-                      <div className="flex items-center gap-1 text-sm">
-                        <Clock size={14} />
-                        {new Date(entry.submission_date).toLocaleDateString('en-US', {
-                          month: 'short',
-                          day: 'numeric',
-                          year: 'numeric'
-                        })}
-                      </div>
-                    </div>
-
-                    {entry.status === 'picked_up' && (
-                      <div className="pt-2 border-t">
-                        <div className="flex items-center gap-2 text-emerald-600">
-                          <CheckCircle2 size={14} />
-                          <span className="text-xs font-medium">Completed & Picked Up</span>
+                    <div className="space-y-3">
+                      <div>
+                        <p className="text-xs text-muted-foreground mb-1">Items</p>
+                        <div className="flex flex-wrap gap-1">
+                          {entry.items.map(function(item, idx) {
+                            return (
+                              <span
+                                key={idx}
+                                className="text-xs bg-secondary px-2 py-1 rounded"
+                              >
+                                {item.item_type} x{item.quantity}
+                              </span>
+                            );
+                          })}
                         </div>
                       </div>
-                    )}
+
+                      <div>
+                        <p className="text-xs text-muted-foreground mb-1">Submitted</p>
+                        <div className="flex items-center gap-1 text-sm">
+                          <Clock size={14} />
+                          {new Date(entry.submission_date).toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                            year: 'numeric'
+                          })}
+                        </div>
+                      </div>
+
+                      {showCompleted && (
+                        <div className="pt-2 border-t">
+                          <div className="flex items-center gap-2 text-emerald-600">
+                            <CheckCircle2 size={14} />
+                            <span className="text-xs font-medium">Completed & Picked Up</span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
