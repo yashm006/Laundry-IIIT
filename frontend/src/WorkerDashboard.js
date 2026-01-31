@@ -86,10 +86,10 @@ const WorkerDashboard = ({ user, onLogout }) => {
     }
   };
 
-  const filteredEntries = entries.filter(entry => {
-    if (filter === 'all') return true;
-    return entry.status === filter;
-  });
+  let filteredEntries = entries;
+  if (filter !== 'all') {
+    filteredEntries = entries.filter(entry => entry.status === filter);
+  }
 
   const stats = {
     total: entries.length,
