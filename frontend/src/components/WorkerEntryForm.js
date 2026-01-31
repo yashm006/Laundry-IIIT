@@ -70,38 +70,41 @@ export function WorkerEntryForm({ formData, setFormData, onSubmit, onClose }) {
 
         <div className="space-y-3">
           <Label>Items</Label>
-          {formData.items.map((item, index) => (
-            <div key={index} className="flex gap-3">
-              <Input
-                placeholder="Item type"
-                data-testid={`item-type-input-${index}`}
-                value={item.item_type}
-                onChange={(e) => handleItemChange(index, 'item_type', e.target.value)}
-                required
-              />
-              <Input
-                type="number"
-                placeholder="Quantity"
-                data-testid={`item-quantity-input-${index}`}
-                value={item.quantity}
-                onChange={(e) => handleItemChange(index, 'quantity', e.target.value)}
-                min="1"
-                className="w-32"
-                required
-              />
-              {formData.items.length > 1 && (
-                <Button
-                  type="button"
-                  data-testid={`remove-item-btn-${index}`}
-                  onClick={() => handleRemoveItem(index)}
-                  variant="ghost"
-                  size="sm"
-                >
-                  <X size={18} />
-                </Button>
-              )}
-            </div>
-          ))}
+          {formData.items.map(function(item, index) {
+            const showRemove = formData.items.length > 1;
+            return (
+              <div key={index} className="flex gap-3">
+                <Input
+                  placeholder="Item type"
+                  data-testid={`item-type-input-${index}`}
+                  value={item.item_type}
+                  onChange={(e) => handleItemChange(index, 'item_type', e.target.value)}
+                  required
+                />
+                <Input
+                  type="number"
+                  placeholder="Quantity"
+                  data-testid={`item-quantity-input-${index}`}
+                  value={item.quantity}
+                  onChange={(e) => handleItemChange(index, 'quantity', e.target.value)}
+                  min="1"
+                  className="w-32"
+                  required
+                />
+                {showRemove && (
+                  <Button
+                    type="button"
+                    data-testid={`remove-item-btn-${index}`}
+                    onClick={() => handleRemoveItem(index)}
+                    variant="ghost"
+                    size="sm"
+                  >
+                    <X size={18} />
+                  </Button>
+                )}
+              </div>
+            );
+          })}
           <Button
             type="button"
             data-testid="add-item-btn"
