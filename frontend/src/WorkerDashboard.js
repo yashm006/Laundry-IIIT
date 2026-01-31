@@ -93,10 +93,16 @@ const WorkerDashboard = ({ user, onLogout }) => {
 
   const stats = {
     total: entries.length,
-    received: entries.filter(e => e.status === 'received').length,
-    completed: entries.filter(e => e.status === 'completed').length,
-    picked_up: entries.filter(e => e.status === 'picked_up').length
+    received: 0,
+    completed: 0,
+    picked_up: 0
   };
+  
+  for (let entry of entries) {
+    if (entry.status === 'received') stats.received++;
+    if (entry.status === 'completed') stats.completed++;
+    if (entry.status === 'picked_up') stats.picked_up++;
+  }
 
   return (
     <div className="flex min-h-screen bg-background">
