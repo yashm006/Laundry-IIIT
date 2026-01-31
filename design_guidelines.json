@@ -1,0 +1,164 @@
+{
+  "design_system": {
+    "identity": {
+      "name": "Laundr.io",
+      "vibe": "Fresh Utility",
+      "archetype": "Swiss Utility x Organic Freshness",
+      "core_values": ["Efficiency", "Hygiene", "Clarity"]
+    },
+    "typography": {
+      "font_family": {
+        "headings": "Outfit, sans-serif",
+        "body": "Inter, sans-serif",
+        "mono": "JetBrains Mono, monospace"
+      },
+      "scale": {
+        "h1": "text-4xl md:text-5xl font-bold tracking-tight",
+        "h2": "text-3xl md:text-4xl font-semibold tracking-tight",
+        "h3": "text-2xl font-semibold",
+        "body_lg": "text-lg leading-relaxed",
+        "body_base": "text-base leading-relaxed",
+        "caption": "text-sm text-muted-foreground"
+      },
+      "imports": [
+        "@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@400;500;700;900&display=swap');"
+      ]
+    },
+    "colors": {
+      "palette": {
+        "primary": {
+          "DEFAULT": "#1E3A8A", 
+          "foreground": "#FFFFFF",
+          "description": "Denim Blue - Trustworthy, Professional"
+        },
+        "secondary": {
+          "DEFAULT": "#F1F5F9",
+          "foreground": "#0F172A",
+          "description": "Cotton White - Clean, Crisp"
+        },
+        "accent": {
+          "DEFAULT": "#10B981",
+          "foreground": "#FFFFFF",
+          "description": "Fresh Mint - Success, Completed"
+        },
+        "destructive": {
+          "DEFAULT": "#EF4444",
+          "foreground": "#FFFFFF"
+        },
+        "background": "#F8FAFC",
+        "card": "#FFFFFF",
+        "border": "#E2E8F0"
+      },
+      "status_colors": {
+        "received": "bg-amber-100 text-amber-800 border-amber-200",
+        "completed": "bg-emerald-100 text-emerald-800 border-emerald-200",
+        "picked_up": "bg-slate-100 text-slate-600 border-slate-200"
+      }
+    },
+    "layout": {
+      "spacing": {
+        "container_padding": "p-6 md:p-12",
+        "section_gap": "gap-8",
+        "card_padding": "p-6"
+      },
+      "grids": {
+        "dashboard_worker": "grid grid-cols-1 md:grid-cols-12 gap-6",
+        "dashboard_student": "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+      },
+      "border_radius": {
+        "card": "rounded-xl",
+        "button": "rounded-lg",
+        "input": "rounded-md"
+      }
+    },
+    "visual_enhancers": {
+      "shadows": {
+        "card": "shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] transition-shadow duration-300",
+        "floating": "shadow-[0_12px_32px_rgba(30,58,138,0.12)]"
+      },
+      "glassmorphism": "bg-white/80 backdrop-blur-md border border-white/20",
+      "gradients": {
+        "hero": "bg-gradient-to-br from-blue-50 to-slate-50",
+        "primary_btn": "bg-primary hover:bg-primary/90"
+      }
+    },
+    "motion": {
+      "transitions": "transition-all duration-200 ease-in-out",
+      "hover_lift": "hover:-translate-y-1",
+      "page_enter": "animate-in fade-in slide-in-from-bottom-4 duration-500"
+    }
+  },
+  "components": {
+    "buttons": {
+      "primary": "h-11 px-8 bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm font-medium",
+      "secondary": "h-11 px-8 bg-white border border-input hover:bg-accent hover:text-accent-foreground shadow-sm font-medium",
+      "ghost": "hover:bg-accent hover:text-accent-foreground"
+    },
+    "cards": {
+      "base": "bg-card text-card-foreground rounded-xl border shadow-sm",
+      "interactive": "bg-card text-card-foreground rounded-xl border shadow-sm hover:shadow-md transition-all cursor-pointer"
+    },
+    "inputs": {
+      "base": "h-11 rounded-md border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+    }
+  },
+  "assets": {
+    "images": {
+      "login_hero": {
+        "url": "https://images.unsplash.com/photo-1757087824089-bdb33ecc3439?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "alt": "Clean organized laundry room",
+        "usage": "Split screen login page right side"
+      },
+      "empty_state": {
+        "url": "https://images.unsplash.com/photo-1677666939395-fbeb465f80d0?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "alt": "Empty laundry room",
+        "usage": "Dashboard empty state"
+      }
+    },
+    "icons": {
+      "library": "lucide-react",
+      "mapping": {
+        "dashboard": "LayoutDashboard",
+        "laundry": "Shirt",
+        "history": "History",
+        "settings": "Settings",
+        "logout": "LogOut",
+        "add": "Plus",
+        "check": "CheckCircle2",
+        "clock": "Clock",
+        "user": "User"
+      }
+    }
+  },
+  "pages": {
+    "login": {
+      "layout": "split_screen",
+      "features": ["Role toggle (Student/Worker)", "Secure inputs", "Brand visual"]
+    },
+    "worker_dashboard": {
+      "layout": "sidebar_layout",
+      "features": ["Stats Overview", "Active Laundry Table", "Add Entry Sheet", "Status Filters"]
+    },
+    "student_dashboard": {
+      "layout": "mobile_responsive_stack",
+      "features": ["Current Status Card (Hero)", "History List", "Pickup Action"]
+    }
+  },
+  "instructions_to_main_agent": [
+    "Use 'Outfit' font for all headings to give a modern, friendly feel.",
+    "Implement the 'Denim Blue' (#1E3A8A) as the primary brand color. Avoid generic bright blues.",
+    "For the Worker Dashboard, prioritize DENSITY. Use tables with small padding for rows.",
+    "For the Student Dashboard, prioritize CLARITY. Use large cards for active laundry status.",
+    "Use the provided Unsplash images for the login page to create a 'Clean' atmosphere.",
+    "Ensure all status badges (Received, Completed, Picked Up) use the specific color combinations defined in 'status_colors'.",
+    "Use 'sonner' for all toast notifications (e.g., 'Laundry marked as completed').",
+    "Add 'data-testid' to all interactive elements."
+  ],
+  "UNIVERSAL_GUIDELINES_FOR_MAIN_AGENT": [
+    "Do not use gradients for backgrounds unless specified. Prefer clean, solid colors or subtle patterns.",
+    "Ensure 2-3x more spacing than typical designs. Use 'p-8' or 'p-12' for containers.",
+    "Never use generic AI emojis. Use Lucide icons.",
+    "Always use 'sonner' for toasts.",
+    "Components must use named exports."
+  ]
+}
