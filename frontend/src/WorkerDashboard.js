@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
-import { Shirt, LayoutDashboard, LogOut, Plus, CheckCircle2, Clock, X } from 'lucide-react';
+import { LayoutDashboard, LogOut, Plus, CheckCircle2 } from 'lucide-react';
+import { WorkerStats } from './components/WorkerStats';
+import { WorkerEntryForm } from './components/WorkerEntryForm';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -35,32 +35,6 @@ function WorkerDashboard({ user, onLogout }) {
     }
   }
 
-  function handleAddItem() {
-    const newItems = [...formData.items];
-    newItems.push({ item_type: '', quantity: 1 });
-    setFormData({ ...formData, items: newItems });
-  }
-
-  function handleRemoveItem(index) {
-    const newItems = [];
-    for (let i = 0; i < formData.items.length; i++) {
-      if (i !== index) {
-        newItems.push(formData.items[i]);
-      }
-    }
-    setFormData({ ...formData, items: newItems });
-  }
-
-  function handleItemChange(index, field, value) {
-    const newItems = [...formData.items];
-    if (field === 'quantity') {
-      newItems[index][field] = parseInt(value);
-    } else {
-      newItems[index][field] = value;
-    }
-    setFormData({ ...formData, items: newItems });
-  }
-
   async function handleSubmit(e) {
     e.preventDefault();
     try {
@@ -68,7 +42,7 @@ function WorkerDashboard({ user, onLogout }) {
       await axios.post(`${API}/laundry/create`, formData, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      toast.success('Laundry entry created successfully!');
+      toast.success('Laundry entry created!');
       setShowAddForm(false);
       setFormData({
         student_id: '',
@@ -87,10 +61,10 @@ function WorkerDashboard({ user, onLogout }) {
       await axios.put(`${API}/laundry/complete`, { entry_id: entryId }, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      toast.success('Laundry marked as completed! Email sent to student.');
+      toast.success('Laundry completed! Email sent.');
       fetchEntries();
     } catch (error) {
-      toast.error('Failed to mark as completed');
+      toast.error('Failed to complete');
     }
   }
 
@@ -169,137 +143,15 @@ function WorkerDashboard({ user, onLogout }) {
           </Button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-card p-6 rounded-xl border shadow-sm">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Total Entries</p>
-                <p className="text-3xl font-bold mt-1">{stats.total}</p>
-              </div>
-              <Shirt className="text-primary" size={32} />
-            </div>
-          </div>
-          <div className="bg-card p-6 rounded-xl border shadow-sm">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Received</p>
-                <p className="text-3xl font-bold mt-1 text-amber-600">{stats.received}</p>
-              </div>
-              <Clock className="text-amber-600" size={32} />
-            </div>
-          </div>
-          <div className="bg-card p-6 rounded-xl border shadow-sm">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Completed</p>
-                <p className="text-3xl font-bold mt-1 text-emerald-600">{stats.completed}</p>
-              </div>
-              <CheckCircle2 className="text-emerald-600" size={32} />
-            </div>
-          </div>
-          <div className="bg-card p-6 rounded-xl border shadow-sm">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Picked Up</p>
-                <p className="text-3xl font-bold mt-1 text-slate-600">{stats.picked_up}</p>
-              </div>
-              <CheckCircle2 className="text-slate-600" size={32} />
-            </div>
-          </div>
-        </div>
+        <WorkerStats stats={stats} />
 
         {showAddForm && (
-          <div className="bg-card p-6 rounded-xl border shadow-sm mb-8">
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="text-xl font-semibold">Add New Entry</h3>
-              <Button
-                data-testid="close-form-btn"
-                onClick={() => setShowAddForm(false)}
-                variant="ghost"
-                size="sm"
-              >
-                <X size={18} />
-              </Button>
-            </div>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="student_id">Student ID</Label>
-                  <Input
-                    id="student_id"
-                    data-testid="form-student-id-input"
-                    value={formData.student_id}
-                    onChange={(e) => setFormData({ ...formData, student_id: e.target.value })}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="student_name">Student Name</Label>
-                  <Input
-                    id="student_name"
-                    data-testid="form-student-name-input"
-                    value={formData.student_name}
-                    onChange={(e) => setFormData({ ...formData, student_name: e.target.value })}
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                <Label>Items</Label>
-                {formData.items.map((item, index) => (
-                  <div key={index} className="flex gap-3">
-                    <Input
-                      placeholder="Item type (e.g., Shirt)"
-                      data-testid={`item-type-input-${index}`}
-                      value={item.item_type}
-                      onChange={(e) => handleItemChange(index, 'item_type', e.target.value)}
-                      required
-                    />
-                    <Input
-                      type="number"
-                      placeholder="Quantity"
-                      data-testid={`item-quantity-input-${index}`}
-                      value={item.quantity}
-                      onChange={(e) => handleItemChange(index, 'quantity', e.target.value)}
-                      min="1"
-                      className="w-32"
-                      required
-                    />
-                    {formData.items.length > 1 && (
-                      <Button
-                        type="button"
-                        data-testid={`remove-item-btn-${index}`}
-                        onClick={() => handleRemoveItem(index)}
-                        variant="ghost"
-                        size="sm"
-                      >
-                        <X size={18} />
-                      </Button>
-                    )}
-                  </div>
-                ))}
-                <Button
-                  type="button"
-                  data-testid="add-item-btn"
-                  onClick={handleAddItem}
-                  variant="outline"
-                  size="sm"
-                >
-                  <Plus size={16} className="mr-2" />
-                  Add Item
-                </Button>
-              </div>
-
-              <Button
-                type="submit"
-                data-testid="submit-entry-btn"
-                className="w-full h-11 bg-primary hover:bg-primary/90"
-              >
-                Create Entry
-              </Button>
-            </form>
-          </div>
+          <WorkerEntryForm
+            formData={formData}
+            setFormData={setFormData}
+            onSubmit={handleSubmit}
+            onClose={() => setShowAddForm(false)}
+          />
         )}
 
         <div className="bg-card p-6 rounded-xl border shadow-sm">
@@ -345,62 +197,62 @@ function WorkerDashboard({ user, onLogout }) {
                   <th>Student ID</th>
                   <th>Student Name</th>
                   <th>Items</th>
-                  <th>Total Items</th>
-                  <th>Submission Date</th>
+                  <th>Total</th>
+                  <th>Date</th>
                   <th>Status</th>
                   <th>Action</th>
                 </tr>
               </thead>
               <tbody>
-                {filteredEntries.length === 0 ? (
+                {filteredEntries.length === 0 && (
                   <tr>
                     <td colSpan="7" className="text-center py-8 text-muted-foreground">
-                      No entries found
+                      No entries
                     </td>
                   </tr>
-                ) : (
-                  filteredEntries.map((entry) => {
-                    const statusClass = entry.status === 'received'
-                      ? 'bg-amber-100 text-amber-800 border-amber-200'
-                      : entry.status === 'completed'
-                      ? 'bg-emerald-100 text-emerald-800 border-emerald-200'
-                      : 'bg-slate-100 text-slate-600 border-slate-200';
-
-                    return (
-                      <tr key={entry.entry_id} data-testid={`entry-row-${entry.entry_id}`}>
-                        <td className="font-medium">{entry.student_id}</td>
-                        <td>{entry.student_name}</td>
-                        <td>
-                          {entry.items.map((item, idx) => (
-                            <div key={idx} className="text-xs">
-                              {item.item_type} x{item.quantity}
-                            </div>
-                          ))}
-                        </td>
-                        <td>{entry.total_items}</td>
-                        <td>{new Date(entry.submission_date).toLocaleDateString()}</td>
-                        <td>
-                          <span className={`status-badge ${statusClass}`}>
-                            {entry.status.replace('_', ' ')}
-                          </span>
-                        </td>
-                        <td>
-                          {entry.status === 'received' && (
-                            <Button
-                              data-testid={`complete-btn-${entry.entry_id}`}
-                              onClick={() => handleComplete(entry.entry_id)}
-                              size="sm"
-                              className="bg-accent hover:bg-accent/90"
-                            >
-                              <CheckCircle2 size={14} className="mr-1" />
-                              Complete
-                            </Button>
-                          )}
-                        </td>
-                      </tr>
-                    );
-                  })
                 )}
+                {filteredEntries.map((entry) => {
+                  let statusClass = 'bg-slate-100 text-slate-600 border-slate-200';
+                  if (entry.status === 'received') {
+                    statusClass = 'bg-amber-100 text-amber-800 border-amber-200';
+                  } else if (entry.status === 'completed') {
+                    statusClass = 'bg-emerald-100 text-emerald-800 border-emerald-200';
+                  }
+
+                  return (
+                    <tr key={entry.entry_id} data-testid={`entry-row-${entry.entry_id}`}>
+                      <td className="font-medium">{entry.student_id}</td>
+                      <td>{entry.student_name}</td>
+                      <td>
+                        {entry.items.map((item, idx) => (
+                          <div key={idx} className="text-xs">
+                            {item.item_type} x{item.quantity}
+                          </div>
+                        ))}
+                      </td>
+                      <td>{entry.total_items}</td>
+                      <td>{new Date(entry.submission_date).toLocaleDateString()}</td>
+                      <td>
+                        <span className={`status-badge ${statusClass}`}>
+                          {entry.status.replace('_', ' ')}
+                        </span>
+                      </td>
+                      <td>
+                        {entry.status === 'received' && (
+                          <Button
+                            data-testid={`complete-btn-${entry.entry_id}`}
+                            onClick={() => handleComplete(entry.entry_id)}
+                            size="sm"
+                            className="bg-accent hover:bg-accent/90"
+                          >
+                            <CheckCircle2 size={14} className="mr-1" />
+                            Complete
+                          </Button>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
