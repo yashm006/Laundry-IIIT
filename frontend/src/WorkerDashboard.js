@@ -25,7 +25,7 @@ function WorkerDashboard({ user, onLogout }) {
 
   async function fetchEntries() {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('worker_token');
       const response = await axios.get(`${API}/laundry/all`, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -38,7 +38,7 @@ function WorkerDashboard({ user, onLogout }) {
   async function handleSubmit(e) {
     e.preventDefault();
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('worker_token');
       await axios.post(`${API}/laundry/create`, formData, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -57,7 +57,7 @@ function WorkerDashboard({ user, onLogout }) {
 
   async function handleComplete(entryId) {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('worker_token');
       await axios.put(`${API}/laundry/complete`, { entry_id: entryId }, {
         headers: { Authorization: `Bearer ${token}` }
       });
