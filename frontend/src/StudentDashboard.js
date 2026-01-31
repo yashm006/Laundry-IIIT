@@ -28,7 +28,7 @@ const StudentDashboard = ({ user, onLogout }) => {
 
   const handlePickup = async (entryId) => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('student_token');
       await axios.put(`${API}/laundry/pickup`, { entry_id: entryId }, {
         headers: { Authorization: `Bearer ${token}` }
       });
