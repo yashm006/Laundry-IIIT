@@ -211,7 +211,7 @@ function WorkerDashboard({ user, onLogout }) {
                     </td>
                   </tr>
                 )}
-                {filteredEntries.map((entry) => {
+                {filteredEntries.length > 0 && filteredEntries.map(function(entry) {
                   let statusClass = 'bg-slate-100 text-slate-600 border-slate-200';
                   if (entry.status === 'received') {
                     statusClass = 'bg-amber-100 text-amber-800 border-amber-200';
@@ -219,17 +219,15 @@ function WorkerDashboard({ user, onLogout }) {
                     statusClass = 'bg-emerald-100 text-emerald-800 border-emerald-200';
                   }
 
+                  const itemsDisplay = entry.items.map(function(item, idx) {
+                    return <div key={idx} className="text-xs">{item.item_type} x{item.quantity}</div>;
+                  });
+
                   return (
                     <tr key={entry.entry_id} data-testid={`entry-row-${entry.entry_id}`}>
                       <td className="font-medium">{entry.student_id}</td>
                       <td>{entry.student_name}</td>
-                      <td>
-                        {entry.items.map((item, idx) => (
-                          <div key={idx} className="text-xs">
-                            {item.item_type} x{item.quantity}
-                          </div>
-                        ))}
-                      </td>
+                      <td>{itemsDisplay}</td>
                       <td>{entry.total_items}</td>
                       <td>{new Date(entry.submission_date).toLocaleDateString()}</td>
                       <td>
