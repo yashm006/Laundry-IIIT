@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Toaster } from '@/components/ui/sonner';
 import Login from './Login';
-import WorkerDashboard from './WorkerDashboard';
 import StudentDashboard from './StudentDashboard';
 import '@/App.css';
 
@@ -31,7 +30,10 @@ function App() {
       {!user ? (
         <Login onLoginSuccess={handleLoginSuccess} />
       ) : user.role === 'worker' ? (
-        <WorkerDashboard user={user} onLogout={handleLogout} />
+        <div className="p-8">
+          <h1>Worker Dashboard Coming Soon...</h1>
+          <button onClick={handleLogout}>Logout</button>
+        </div>
       ) : (
         <StudentDashboard user={user} onLogout={handleLogout} />
       )}
