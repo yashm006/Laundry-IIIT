@@ -1,34 +1,110 @@
-.App-logo {
-    height: 40vmin;
-    pointer-events: none;
+.login-split-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 100vh;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-    .App-logo {
-        animation: App-logo-spin infinite 20s linear;
-    }
+@media (max-width: 768px) {
+  .login-split-container {
+    grid-template-columns: 1fr;
+  }
+  
+  .login-image-side {
+    display: none;
+  }
 }
 
-.App-header {
-    background-color: #0f0f10;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: white;
+.login-image-side {
+  background-size: cover;
+  background-position: center;
+  position: relative;
 }
 
-.App-link {
-    color: #61dafb;
+.login-image-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(30, 58, 138, 0.4), rgba(30, 58, 138, 0.7));
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 3rem;
+  color: white;
 }
 
-@keyframes App-logo-spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
+.status-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-width: 1px;
+}
+
+.laundry-card {
+  transition: all 0.2s ease-in-out;
+}
+
+.laundry-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 280px;
+  background: white;
+  border-right: 1px solid #E2E8F0;
+  padding: 2rem 0;
+}
+
+.main-content {
+  margin-left: 280px;
+  padding: 2rem;
+}
+
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 240px;
+  }
+  .main-content {
+    margin-left: 240px;
+  }
+}
+
+.table-container {
+  overflow-x: auto;
+  border-radius: 12px;
+  border: 1px solid #E2E8F0;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+}
+
+.data-table th {
+  background: #1E3A8A;
+  color: white;
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.data-table td {
+  padding: 1rem;
+  border-bottom: 1px solid #E2E8F0;
+  font-size: 0.875rem;
+}
+
+.data-table tr:last-child td {
+  border-bottom: none;
+}
+
+.data-table tr:hover {
+  background: #F8FAFC;
 }
