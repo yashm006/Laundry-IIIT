@@ -113,14 +113,16 @@ const StudentDashboard = ({ user, onLogout }) => {
                   <div className="bg-white/60 p-4 rounded-lg mb-6">
                     <p className="text-sm font-semibold text-emerald-700 mb-2">Items:</p>
                     <div className="flex flex-wrap gap-2">
-                      {activeEntry.items.map((item, idx) => (
-                        <span
-                          key={idx}
-                          className="bg-emerald-200 text-emerald-900 px-3 py-1 rounded-full text-sm font-medium"
-                        >
-                          {item.item_type} x{item.quantity}
-                        </span>
-                      ))}
+                      {activeEntry.items.map(function(item, idx) {
+                        return (
+                          <span
+                            key={idx}
+                            className="bg-emerald-200 text-emerald-900 px-3 py-1 rounded-full text-sm font-medium"
+                          >
+                            {item.item_type} x{item.quantity}
+                          </span>
+                        );
+                      })}
                     </div>
                   </div>
                 </div>
