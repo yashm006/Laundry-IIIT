@@ -125,8 +125,98 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
     return User(**user)
 
 # Auth endpoints
-@api_router.post("/auth/register")
-async def register(user_data: UserRegister):
+
+# Google OAuth for students
+class GoogleUserData(BaseModel):
+    id: str
+    email: EmailStr
+    name: str
+    picture: str
+    session_token: str
+
+@api_router.post("/auth/student/google")
+async def student_google_auth(user_data: GoogleUserData):
+    # Validate domain
+    if not user_data.email.endswith('@iiitdwd.ac.in'):
+        raise HTTPException(status_code=403, detail="Only @iiitdwd.ac.in emails allowed")
+    
+    # Check if student exists
+    existing = await db.users.find_one({"email": user_data.email}, {"_id": 0})
+    
+    if existing:
+        user_id = existing['user_id']
+        # Update user info
+        await db.users.update_one(
+            {"user_id": user_id},
+            {"$set": {"name": user_data.name, "picture": user_data.picture}}
+        )
+    else:
+        # Create new student with email prefix as student_id
+        user_id = f"user_{uuid.uuid4().hex[:12]}"
+        student_id = user_data.email.split('@')[0].upper()
+        
+        user_doc = {
+            "user_id": user_id,
+            "email": user_data.email,
+            "name": user_data.name,
+            "picture": user_data.picture,
+            "role": "student",
+            "student_id": student_id,
+            "created_at": datetime.now(timezone.utc)
+        }
+        
+        await db.users.insert_one(user_doc)
+    
+    # Store session
+    session_doc = {
+        "user_id": user_id,
+        "session_token": user_data.session_token,
+        "expires_at": datetime.now(timezone.utc) + timedelta(days=7),
+        "created_at": datetime.now(timezone.utc)
+    }
+    await db.user_sessions.insert_one(session_doc)
+    
+    user = await db.users.find_one({"user_id": user_id}, {"_id": 0})
+    
+    return {
+        "session_token": user_data.session_token,
+        "user": {
+            "user_id": user['user_id'],
+            "email": user['email'],
+            "name": user['name'],
+            "role": user['role'],
+            "student_id": user.get('student_id'),
+            "picture": user.get('picture')
+        }
+    }
+
+# Worker email/password login
+class WorkerLogin(BaseModel):
+    email: EmailStr
+    password: str
+
+@api_router.post("/auth/worker/login")
+async def worker_login(credentials: WorkerLogin):
+    user = await db.users.find_one({"email": credentials.email, "role": "worker"}, {"_id": 0})
+    if not user:
+        raise HTTPException(status_code=401, detail="Worker not found")
+    
+    if not user.get('password_hash'):
+        raise HTTPException(status_code=401, detail="Invalid authentication method")
+    
+    if not verify_password(credentials.password, user['password_hash']):
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+    
+    token = create_token(user['user_id'], user['email'], user['role'])
+    return {
+        "token": token,
+        "user": {
+            "user_id": user['user_id'],
+            "email": user['email'],
+            "name": user['name'],
+            "role": user['role']
+        }
+    }
     existing = await db.users.find_one({"email": user_data.email}, {"_id": 0})
     if existing:
         raise HTTPException(status_code=400, detail="Email already registered")
