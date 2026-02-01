@@ -27,11 +27,32 @@ SENDER_EMAIL = os.environ.get('SENDER_EMAIL', 'onboarding@resend.dev')
 JWT_SECRET = os.environ.get('JWT_SECRET', 'your-secret-key-change-in-production')
 
 app = FastAPI()
+
+# CORS Middleware (must be before routes)
+app.add_middleware(
+    CORSMiddleware,
+    allow_credentials=True,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 api_router = APIRouter(prefix="/api")
+
 security = HTTPBearer()
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
+
+
+@app.on_event("startup")
+async def test_db():
+    try:
+        await db.command("ping")
+        print("✅ MongoDB Connected Successfully")
+    except Exception as e:
+        print("❌ MongoDB Connection Failed:", e)
+
 
 # Models
 class UserRegister(BaseModel):
@@ -126,6 +147,30 @@ async def register(user_data: UserRegister):
     await db.users.insert_one(user_doc)
     token = create_token(user_id, user_data.email, user_data.role)
     
+    # --- Send Welcome Email ---
+    if resend.api_key:
+        html_content = f"""
+        <html>
+        <body style='font-family: Inter, sans-serif;'>
+            <h1>Welcome to Laundr.io, {user_data.name}!</h1>
+            <p>Thanks for registering. You can now log in and manage your laundry easily.</p>
+            <p>Your role: {user_data.role}</p>
+        </body>
+        </html>
+        """
+        params = {
+            "from": SENDER_EMAIL,
+            "to": [user_data.email],
+            "subject": "Welcome to Laundr.io!",
+            "html": html_content
+        }
+        try:
+            await asyncio.to_thread(resend.Emails.send, params)
+        except Exception as e:
+            print(f"Failed to send welcome email: {str(e)}")
+            logger.error(f"Failed to send welcome email: {str(e)}")
+    # --- End of Email ---
+
     return {
         "token": token,
         "user": {
@@ -279,13 +324,13 @@ async def pickup_laundry(data: LaundryPickup, current_user: User = Depends(get_c
 
 app.include_router(api_router)
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_credentials=True,
-    allow_origins=os.environ.get('CORS_ORIGINS', '*').split(','),
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_credentials=True,
+#     allow_origins=os.environ.get('CORS_ORIGINS', '*').split(','),
+#     allow_methods=["*"],
+#     allow_headers=["*"],
+# )
 
 @app.on_event("shutdown")
 async def shutdown_db_client():

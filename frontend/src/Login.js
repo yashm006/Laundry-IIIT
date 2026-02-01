@@ -33,7 +33,9 @@ const Login = ({ onLoginSuccess }) => {
             password: formData.password, 
             name: formData.name, 
             role: role,
-            student_id: role === 'student' ? formData.student_id : null
+            // student_id: role === 'student' ? formData.student_id : null
+            ...(role === 'student' && { student_id: formData.student_id })
+
           };
 
       const response = await axios.post(`${API}${endpoint}`, payload);
