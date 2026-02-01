@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Toaster } from '@/components/ui/sonner';
-import WorkerLogin from './WorkerLogin';
+import UnifiedLogin from './UnifiedLogin';
 import WorkerDashboard from './WorkerDashboard';
 import '@/App.css';
 
@@ -28,7 +28,7 @@ function WorkerApp() {
   return (
     <>
       {!user ? (
-        <WorkerLogin onLoginSuccess={handleLoginSuccess} />
+        <UnifiedLogin onLoginSuccess={handleLoginSuccess} />
       ) : (
         <WorkerDashboard user={user} onLogout={handleLogout} />
       )}

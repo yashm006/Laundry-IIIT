@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Toaster } from '@/components/ui/sonner';
-import StudentLogin from './StudentLogin';
+import UnifiedLogin from './UnifiedLogin';
 import StudentDashboard from './StudentDashboard';
 import '@/App.css';
 
@@ -28,7 +28,7 @@ function StudentApp() {
   return (
     <>
       {!user ? (
-        <StudentLogin onLoginSuccess={handleLoginSuccess} />
+        <UnifiedLogin onLoginSuccess={handleLoginSuccess} />
       ) : (
         <StudentDashboard user={user} onLogout={handleLogout} />
       )}
